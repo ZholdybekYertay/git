@@ -1,0 +1,5 @@
+n = int(input())
+b = map(int, input().split())
+u = set(b)
+s = sorted(u)
+print(*s)

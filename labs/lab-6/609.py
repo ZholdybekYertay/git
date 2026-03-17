@@ -1,0 +1,6 @@
+n = int(input())
+k = input().split()
+v = input().split()
+data = dict(zip(k, v))
+q = input().strip()
+print(data.get(q , "Not found"))

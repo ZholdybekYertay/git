@@ -32,12 +32,13 @@ if re.search(r"a.*b", s):
     print("Match")
 else:
     print("No match")
-    
+
 #6
 import re
 s = input()
 result = re.sub(r"[ ,.]", ":", s)
 print(result)
+
 
 #7
 s = input()

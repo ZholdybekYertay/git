@@ -1,20 +1,15 @@
--- Search by pattern
-CREATE OR REPLACE FUNCTION search_contacts1(pattern TEXT)
-RETURNS TABLE(id INT, name TEXT, phone TEXT) AS $$
-BEGIN
-    RETURN QUERY
-    SELECT * FROM phonebook
-    WHERE name ILIKE '%' || pattern || '%'
-       OR phone ILIKE '%' || pattern || '%';
-END;
-$$ LANGUAGE plpgsql;
+DROP FUNCTION IF EXISTS search_contacts1(TEXT) CASCADE;
 
--- Pagination
-CREATE OR REPLACE FUNCTION get_contacts_paginated1(lim INT, off INT)
-RETURNS TABLE(id INT, name TEXT, phone TEXT) AS $$
+CREATE FUNCTION search_contacts1(search_pattern TEXT)
+RETURNS TABLE(ret_id INT, ret_name TEXT, ret_phone TEXT) AS $$
 BEGIN
     RETURN QUERY
-    SELECT * FROM phonebook
-    LIMIT lim OFFSET off;
+    SELECT 
+        p.id, 
+        p.name, 
+        p.phone
+    FROM phonebook p
+    WHERE p.name ILIKE ('%' || search_pattern || '%')
+       OR p.phone ILIKE ('%' || search_pattern || '%');
 END;
 $$ LANGUAGE plpgsql;

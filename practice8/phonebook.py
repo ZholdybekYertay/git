@@ -1,6 +1,5 @@
 from connect import get_connection
 
-
 def create_table():
     conn = get_connection()
     cur = conn.cursor()
@@ -19,7 +18,6 @@ def create_table():
     print("Table is ready.")
 
 
-# 🔹 Insert or Update using procedure
 def upsert_contact():
     name = input("Enter name: ")
     phone = input("Enter phone: ")
@@ -35,23 +33,39 @@ def upsert_contact():
     print("Contact inserted/updated.")
 
 
-# 🔹 Search using function
 def search_contacts():
-    pattern = input("Enter search pattern: ")
+    pattern = input("Enter search pattern: ").strip()
+
+    if not pattern:
+        print("Поисковый запрос не может быть пустым.")
+        return
 
     conn = get_connection()
-    cur = conn.cursor()
+    try:
+        cur = conn.cursor()
+        
+        search_query = """
+            SELECT id, name, phone 
+            FROM phonebook 
+            WHERE name ILIKE %s OR phone ILIKE %s;
+        """
 
-    cur.execute("SELECT * FROM search_contacts1(%s)", (pattern,))
-    rows = cur.fetchall()
+        wildcard_pattern = f"%{pattern}%"
+        
+        cur.execute(search_query, (wildcard_pattern, wildcard_pattern))
+        rows = cur.fetchall()
 
-    print_results(rows)
+        if rows:
+            print_results(rows)
+        else:
+            print("No contacts found.")
+            
+    except Exception as e:
+        print(f"An error occurred: {e}")
+    finally:
+        cur.close()
+        conn.close()
 
-    cur.close()
-    conn.close()
-
-
-# 🔹 Pagination
 def pagination():
     limit = int(input("Enter limit: "))
     offset = int(input("Enter offset: "))
@@ -68,7 +82,6 @@ def pagination():
     conn.close()
 
 
-# 🔹 Delete
 def delete_contact():
     value = input("Enter name or phone to delete: ")
 
@@ -83,7 +96,6 @@ def delete_contact():
     print("Deleted.")
 
 
-# 🔹 Insert many
 def insert_many():
     names = input("Enter names (comma separated): ").split(",")
     phones = input("Enter phones (comma separated): ").split(",")
@@ -99,7 +111,6 @@ def insert_many():
     print("Bulk insert done.")
 
 
-# 🔹 Show all
 def show_all():
     conn = get_connection()
     cur = conn.cursor()

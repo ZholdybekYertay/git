@@ -1,4 +1,3 @@
-# PostgreSQL connection settings
 DB_CONFIG = {
     "dbname": "postgres",
     "user": "postgres",

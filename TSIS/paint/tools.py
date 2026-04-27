@@ -7,9 +7,7 @@ WHITE = (255, 255, 255)
 BRUSH_SIZES = {1: 2, 2: 5, 3: 10}
 
 
-# ─────────────────────────────────────────────
-#  SHAPE DRAWING
-# ─────────────────────────────────────────────
+
 
 def draw_shape(surface, tool, color, start, end, brush_size):
     """Dispatcher for all shape / line tools."""
@@ -57,9 +55,7 @@ def draw_shape(surface, tool, color, start, end, brush_size):
         pygame.draw.polygon(surface, color, points, t)
 
 
-# ─────────────────────────────────────────────
-#  FLOOD FILL
-# ─────────────────────────────────────────────
+
 
 def flood_fill(surface, start_pos, fill_color):
     """BFS flood-fill on a pygame Surface."""
@@ -90,33 +86,18 @@ def flood_fill(surface, start_pos, fill_color):
     surface.unlock()
 
 
-# ─────────────────────────────────────────────
-#  TEXT TOOL STATE
-# ─────────────────────────────────────────────
 
 class TextTool:
-    """
-    Manages text-entry state for the text tool.
-
-    Usage:
-        tool = TextTool(font)
-        tool.start(pos)            # user clicked canvas
-        tool.handle_key(event)     # pass every KEYDOWN event
-        tool.draw_preview(screen)  # call every frame
-        if tool.confirmed:
-            tool.commit(drawing_surface)
-            tool.reset()
-    """
-
+    
     def __init__(self, font):
         self.font = font
         self.active = False
         self.pos = (0, 0)
         self.buffer = ""
-        self.confirmed = False   # True when Enter pressed
-        self.cancelled = False   # True when Escape pressed
+        self.confirmed = False  
+        self.cancelled = False  
 
-    # ── control ──────────────────────────────
+ 
 
     def start(self, pos):
         self.pos = pos
@@ -131,15 +112,15 @@ class TextTool:
         self.confirmed = False
         self.cancelled = False
 
-    # ── keyboard input ────────────────────────
+
 
     def handle_key(self, event):
-        """Call with every pygame.KEYDOWN event while text tool is active."""
+        
         if not self.active:
             return
 
         if event.key == pygame.K_RETURN:
-            self.confirmed = True          # main loop will commit + reset
+            self.confirmed = True         
         elif event.key == pygame.K_ESCAPE:
             self.cancelled = True
             self.reset()
@@ -148,17 +129,16 @@ class TextTool:
         elif event.unicode and event.unicode.isprintable():
             self.buffer += event.unicode
 
-    # ── rendering ─────────────────────────────
-
+   
     def draw_preview(self, screen, color):
-        """Render live text + blinking cursor on screen (NOT the canvas)."""
+        
         if not self.active:
             return
         preview = self.font.render(self.buffer + "|", True, color)
         screen.blit(preview, self.pos)
 
     def commit(self, surface, color):
-        """Stamp the finished text permanently onto the drawing surface."""
+       
         if self.buffer:
             rendered = self.font.render(self.buffer, True, color)
             surface.blit(rendered, self.pos)
